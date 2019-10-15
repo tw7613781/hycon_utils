@@ -31,20 +31,18 @@ class BlockCrawler {
                 })
         
                 res.on('end', ()=>{
-                    try {
-                        const block = JSON.parse(body);
-                        this.db.insert(block)
-                        this.count += 1
-                        if (this.count === this.number) return;
-                        else {
-                            const prevBlock = block.prevBlock.split(',')[0];
-                            setTimeout(()=>{
-                                this.getBlock(prevBlock)
-                            }, 100)
-                        }
-                    } catch(e){
-                        logger.error(e)
-                        throw e
+                    const block = JSON.parse(body);
+                    this.db.insert(block).catch((e)=>{
+                        logger.error(e);
+                        throw e;
+                    })
+                    this.count += 1
+                    if (this.count === this.number) return;
+                    else {
+                        const prevBlock = block.prevBlock.split(',')[0];
+                        setTimeout(()=>{
+                            this.getBlock(prevBlock)
+                        }, 100)
                     }
                 })
             })

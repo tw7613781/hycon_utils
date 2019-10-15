@@ -3,7 +3,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const log4js = require('./utils');
 
-const logger = log4js.Logger('sqliteDB')
+const logger = log4js.getLogger('sqliteDB')
 
 class SQLiteDB {
     constructor(tableName) {
@@ -26,7 +26,7 @@ class SQLiteDB {
             stateRoot text,
             merkleRoot text,
             txs text,
-            height, text,
+            height text,
             timeStamp text,
             prevBlock text,
             nonce text,
@@ -44,21 +44,22 @@ class SQLiteDB {
 
     insert(block) {
         return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO ${this.table} (
+            const sql = `INSERT OR REPLACE INTO ${this.table} (
                 hash, amount, difficulty, fee, length, volume,
                 stateRoot, merkleRoot, txs, height, timeStamp,
                 prevBlock, nonce, miner, resultHash
-            ) VALUES ( ${block.hash}, ${block.amount}, ${block.difficulty},
-                ${block.fee}, ${block.length}, ${block.volume},
-                ${block.stateRoot}, ${block.merkleRoot}, ${block.txs},
-                ${block.height}, ${block.timeStamp}, ${block.prevBlock},
-                ${block.monce}, ${block.miner}, ${block.resultHash}
-            );`
-            this.db.run(sql, (e)=> {
+            ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`
+            const params = [block.hash, block.amount, block.difficulty,
+                block.fee, block.length, block.volume,
+                block.stateRoot, block.merkleRoot, JSON.stringify(block.txs),
+                block.height, block.timeStamp, block.prevBlock,
+                block.nonce, block.miner, block.resultHash];
+            this.db.run(sql, params, (e)=> {
                 if (e) {
                     logger.error(`insert table ${this.table} error`);
                     reject(e);
                 }
+                logger.info(`${block.height}-${block.hash} saved`)
                 resolve();
             });
         })
