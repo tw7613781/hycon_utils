@@ -4,7 +4,8 @@
   "description": "",
   "main": "blockCrawler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start_old": "node app_old.js",
+    "start_new": "node app_new.js"
   },
   "repository": {
     "type": "git",

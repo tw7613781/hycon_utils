@@ -2,18 +2,18 @@
 
 const https = require('https');
 const http = require('http')
-const fs = require('fs');
+const SQLiteDB = require('./sqliteDB')
 const log4js = require('./utils')
 
 const logger = log4js.getLogger('blockCrawler')
 
 class BlockCrawler {
-    constructor(tip, number, url, saveFolder) {
+    constructor(tip, number, url, tableName) {
         this.tip = tip;
         this.number = number;
         this.count = 0
         this.url = url;
-        this.saveFolder = saveFolder;
+        this.db = new SQLiteDB(tableName);
         setTimeout(() => {
             this.getBlock(this.tip);
         }, 100);
@@ -33,7 +33,7 @@ class BlockCrawler {
                 res.on('end', ()=>{
                     try {
                         const block = JSON.parse(body);
-                        this.writeToFile(block)
+                        this.db.insert(block)
                         this.count += 1
                         if (this.count === this.number) return;
                         else {
@@ -60,17 +60,6 @@ class BlockCrawler {
             logger.error(e)
             throw e
         }
-    }
-
-    writeToFile(block) {
-        const blockHash = block.hash;
-        const blockHeight = block.height;
-        const title = blockHeight + '_' + blockHash;
-        const data = JSON.stringify(block)
-        fs.writeFile(`${this.saveFolder}/${title}.json`, data, (e)=>{
-            if (e) throw e;
-            logger.info(`${title} has been saved`)
-        })
     }
 }
 
