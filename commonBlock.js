@@ -5,7 +5,7 @@ const logger = log4js.getLogger('commonBlock')
 
 const table_old = new SQLiteDB('old_block');
 const table_new = new SQLiteDB('new_block');
-const height = 1565933 // the known common block, before fork
+const height = 1579786 // the known common block, before fork
 
 async function findCommonBlock() {
     for (let i =0; i < 100000; i++){
@@ -13,6 +13,7 @@ async function findCommonBlock() {
         const block_new = await table_new.findBlockByHeight(height + i);
         if (block_old.hash != block_new.hash) {
             logger.fatal(`Found the block: ${height + i}`)
+            return 
         }
         logger.info(`${height + i} has same block`)
     }
