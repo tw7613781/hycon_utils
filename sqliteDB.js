@@ -83,6 +83,21 @@ class SQLiteDB {
         })
     }
 
+    findTxHigher(height) {
+        return new Promise((resolve, reject)=>{
+            const sql = `SELECT txs FROM ${this.table} WHERE height > $height`;
+            const params = {
+                $height: height
+            }
+            this.db.all(sql, params, (e, rows)=>{
+                if (e) {
+                    reject(e)
+                }
+                resolve(rows)
+            })
+        })
+    }
+
     closeDB () {
         return new Promise((resolve, reject) => {
             this.db.close((e) => {
