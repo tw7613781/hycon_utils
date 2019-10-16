@@ -65,6 +65,24 @@ class SQLiteDB {
         })
     }
 
+    findBlockByHeight(height) {
+        return new Promise((resolve, reject)=>{
+            const sql = `SELECT hash FROM ${this.table} WHERE height = $height`;
+            const params = {
+                $height: height
+            }
+            this.db.all(sql, params, (e, rows)=>{
+                if (rows.length > 1) {
+                    reject(`same height found: ${height}`);
+                }
+                if (e) {
+                    reject(e)
+                }
+                resolve(rows[0])
+            })
+        })
+    }
+
     closeDB () {
         return new Promise((resolve, reject) => {
             this.db.close((e) => {

@@ -62,3 +62,4 @@ typings/
 
 # database file
 data/*.db
+data/*.db-journal
