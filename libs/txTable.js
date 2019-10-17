@@ -1,9 +1,9 @@
 'use strict';
 
 const sqlite3 = require('sqlite3').verbose();
-const log4js = require('./utils');
+const log4js = require('./logger');
 
-const logger = log4js.getLogger('sqliteDB')
+const logger = log4js.getLogger('txTable')
 
 class TxTable {
     constructor(tableName) {

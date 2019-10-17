@@ -1,4 +1,4 @@
-const getBlockFromJson = require('./blockFromJson')
+const { getBlockFromJson } = require('../libs/utils')
 
 const path = '../fork_issue_20191012/newChain/';
 

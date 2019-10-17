@@ -1,15 +1,16 @@
 'use strict';
 
 const sqlite3 = require('sqlite3').verbose();
-const log4js = require('./utils');
+const log4js = require('./logger');
 
-const logger = log4js.getLogger('sqliteDB')
+const logger = log4js.getLogger('blockTable')
 
-class SQLiteDB {
+class BlockTable {
     constructor(tableName) {
         this.db = new sqlite3.Database('./data/data.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE), (e) => {
             if (e) {
                 logger.error(`init database error: ${e}`);
+                return;
             }
             logger.info('connected to the data db');
         }
@@ -37,6 +38,7 @@ class SQLiteDB {
         this.db.exec(tableSchema, (e) => {
             if (e) {
                 logger.error(`init table error: ${e}`);
+                return;
             }
             logger.info(`went to table ${this.table}`);
         });
@@ -109,4 +111,4 @@ class SQLiteDB {
     }
 }
 
-module.exports = SQLiteDB
+module.exports = BlockTable

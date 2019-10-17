@@ -1,10 +1,10 @@
-const SQLiteDB = require('./sqliteDB')
-const log4js = require('./utils')
+const blockTable = require('../libs/blockTable')
+const log4js = require('../libs/logger')
 
 const logger = log4js.getLogger('commonBlock')
 
-const table_old = new SQLiteDB('old_block');
-const table_new = new SQLiteDB('new_block');
+const table_old = new blockTable('old_block');
+const table_new = new blockTable('new_block');
 const height = 1579786 // the known common block, before fork
 
 async function findCommonBlock() {
