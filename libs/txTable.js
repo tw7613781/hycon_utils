@@ -36,14 +36,22 @@ class TxTable {
         });
     }
 
-    insert(tx) {
+    insert(tx, fromDB) {
         return new Promise((resolve, reject) => {
             const sql = `INSERT OR REPLACE INTO ${this.table} (
                 hash, amount, toAddress, signature, estimated, receiveTime,
                 fee, fromAddress, nonce) VALUES (?,?,?,?,?,?,?,?,?);`
-            const params = [tx.hash, tx.amount, tx.to,
+            let toAddress, fromAddress;
+            if (fromDB) {
+                toAddress = tx.toAddress;
+                fromAddress = tx.fromAddress;
+            } else {
+                toAddress = tx.to;
+                fromAddress = tx.from;
+            }
+            const params = [tx.hash, tx.amount, toAddress,
                 tx.signature, tx.estimated, tx.receiveTime,
-                tx.fee, tx.from, tx.nonce];
+                tx.fee, fromAddress, tx.nonce];
             this.db.run(sql, params, (e)=> {
                 if (e) {
                     logger.error(`insert table ${this.table} error`);
@@ -52,6 +60,36 @@ class TxTable {
                 logger.info(`${tx.hash}-${tx.amount} saved`)
                 resolve();
             });
+        })
+    }
+
+    findAllTx() {
+        return new Promise((resolve, reject)=>{
+            const sql = `SELECT hash, amount, toAddress, signature, estimated, receiveTime,
+            fee, fromAddress, nonce FROM ${this.table}`;
+            this.db.all(sql, (e, rows)=>{
+                if (e) {
+                    reject(e)
+                }
+                resolve(rows)
+            })
+        })
+    }
+
+    findTxByHash(hash) {
+        return new Promise((resolve, reject)=>{
+            const sql = `SELECT hash, amount, toAddress, signature, estimated, receiveTime,
+            fee, fromAddress, nonce FROM ${this.table} WHERE hash = $hash`;
+            const params = {
+                $hash: hash
+            }
+            this.db.all(sql, params, (e, rows)=>{
+                if (e) {
+                    reject(e)
+                }
+                if (rows.length == 0) reject(`notFound error: ${hash}`)
+                resolve(rows[0])
+            })
         })
     }
 

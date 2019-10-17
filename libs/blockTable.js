@@ -77,6 +77,7 @@ class BlockTable {
                 if (rows.length > 1) {
                     reject(`same height found: ${height}`);
                 }
+                if (rows.length == 0) reject(`notFound error: ${height}`)
                 if (e) {
                     reject(e)
                 }
