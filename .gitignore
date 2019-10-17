@@ -63,5 +63,8 @@ typings/
 # database file
 data/*.db
 data/*.db-journal
+data/*.json
 
 .DS_Store
+
+.vscode
