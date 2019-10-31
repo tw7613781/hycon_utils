@@ -19,6 +19,7 @@
   "homepage": "https://github.com/tw7613781/hycon_utils#readme",
   "dependencies": {
     "log4js": "^5.2.2",
+    "sleep": "^6.1.0",
     "sqlite3": "^4.1.0"
   }
 }

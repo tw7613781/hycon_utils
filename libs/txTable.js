@@ -93,6 +93,23 @@ class TxTable {
         })
     }
 
+    selectLargeTx(amount) {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT hash, amount, toAddress, signature, fee, fromAddress, 
+            nonce, receiveTime FROM ${this.table} WHERE amount > $amount order by fromAddress, nonce`;
+            const params = {
+                $amount: amount
+            }
+            this.db.all(sql, params, (e, rows)=>{
+                if (e) {
+                    reject(e)
+                }
+                if (rows.length == 0) reject(`notFound error: ${hash}`)
+                resolve(rows)
+            })      
+        })
+    }
+
     closeDB () {
         return new Promise((resolve, reject) => {
             this.db.close((e) => {
