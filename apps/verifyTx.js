@@ -1,6 +1,7 @@
 const https = require('https')
 const http = require('http')
 const sleep = require('sleep')
+const request = require('request')
 const log4js = require('../libs/logger')
 const TxTable = require('../libs/txTable')
 
@@ -62,33 +63,25 @@ function getBlock(hash) {
 
 function sendTx(tx){
     return new Promise((resolve, reject)=>{
-        const reqURL = 'http://network.hycon.io/api/v1/tx'
         const options = {
+            url: 'http://54.213.228.14:2442/api/v1/tx',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: tx,
-            method: 'POST'
+            json: tx
         }
         try {
-            const req = http.request(reqURL, options, (res)=>{
-                let body = '';
-        
-                res.on('data', (chunk)=>{
-                    body += chunk
-                })
-        
-                res.on('end', ()=>{
-                    const ret = JSON.parse(body);
-                    resolve(ret);
-                })
+            request(options, (error, res, body)=>{
+                if (!error) {
+                    const info = JSON.parse(JSON.stringify(body));
+                    resolve(info)
+                }
+                else {
+                    reject(error)
+                }    
             });
-            req.on('error', (e)=>{
-                logger.error(e);
-                reject(e);
-            });      
         } catch (e) {
-            logger.error(e);
             reject(e);
         }
     })
@@ -97,11 +90,12 @@ function sendTx(tx){
 async function main(){
     const txTable = new TxTable('lost_tx');
     const missedTx = await txTable.selectLargeTx(1);
+    let ret;
     for(let i =0; i<missedTx.length; i++) {
         const tx = missedTx[i];
         logger.info('====tx in DB====')
         logger.info(tx);
-        const ret = await getTx(tx.hash);
+        ret = await getTx(tx.hash);
         logger.info('====tx in API====')
         logger.info(ret);
         if (ret.error) {
@@ -114,7 +108,7 @@ async function main(){
             if (newBlock.error) {
                 logger.error('Not found block')
                 logger.info('Start to sending the Tx')
-                const x = {
+                let x = {
                         'from': tx.fromAddress,
                         'to': tx.toAddress,
                         'amount': tx.amount,
@@ -123,13 +117,23 @@ async function main(){
                         'recovery': 0,
                         'nonce': tx.nonce
                     };
-                const ret = await sendTx(x);
-                if (ret.txhash) {
+                ret = await sendTx(x);
+                if (ret.txHash) {
                     logger.warn(`Tx sent with hash: ${ret.txHash}`);
-                    sleep.sleep(15);
+                    sleep.sleep(10);
                 } else {
-                    logger.error(`sending t error: ${ret}`);
-                    return;
+                    logger.error('sending tx error');
+                    logger.error(ret);
+                    logger.info('sent again with recovery == 1')
+                    x.recovery = 1;
+                    ret = await sendTx(x);
+                    if (ret.txHash) {
+                        logger.warn(`Tx sent with hash: ${ret.txHash}`);
+                        sleep.sleep(10);                       
+                    } else {
+                        logger.error('sending tx error');
+                        logger.error(ret);
+                    }
                 }
             } else {
                 logger.info('Found the block');
