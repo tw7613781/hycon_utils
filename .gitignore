@@ -68,3 +68,5 @@ data/*.json
 .DS_Store
 
 .vscode
+
+config.json

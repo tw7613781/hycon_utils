@@ -5,7 +5,8 @@
   "main": "blockCrawler.js",
   "scripts": {
     "start_old": "node app_old.js",
-    "start_new": "node app_new.js"
+    "start_new": "node app_new.js",
+    "protogen": "pbjs -t static-module -w commonjs -o apps/proto.js proto/tx.proto"
   },
   "repository": {
     "type": "git",
@@ -18,8 +19,14 @@
   },
   "homepage": "https://github.com/tw7613781/hycon_utils#readme",
   "dependencies": {
+    "base-58": "0.0.1",
+    "bip39": "2.6.0",
+    "blake2b": "^2.1.3",
+    "hdkey": "^1.1.1",
     "log4js": "^5.2.2",
+    "protobufjs": "^6.8.8",
     "request": "^2.88.0",
+    "secp256k1": "^3.7.1",
     "sleep": "^6.1.0",
     "sqlite3": "^4.1.0"
   }
