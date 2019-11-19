@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "",
-  "scripts": {},
+  "scripts": {
+    "wallet": "./node_modules/.bin/ts-node src/wallet.ts"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tw7613781/hycon_utils.git"
