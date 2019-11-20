@@ -177,7 +177,12 @@ async function main() {
         if (txInfo.nonce - addrInfo.nonce === 1) {
             for (const tx1 of blockInfo.txs) {
                 if ( tx1.from === txInfo.from) {
-                    await sendingTx(tx1)
+                    await new Promise( (resolve, reject) => {
+                        setTimeout(async () => {
+                            await sendingTx(tx1)
+                            resolve()
+                        }, 1000 * 10);
+                    })
                 }
             }
         }
