@@ -181,7 +181,7 @@ async function main() {
                         setTimeout(async () => {
                             await sendingTx(tx1)
                             resolve()
-                        }, 1000 * 10);
+                        }, 1000 * 10)
                     })
                 }
             }
