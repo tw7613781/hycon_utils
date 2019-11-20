@@ -1,20 +1,18 @@
-import * as util from "@glosfer/hyconjs-util"
-import { log4js } from "./utils"
-import { MIN_VALUE } from "long"
+import * as util from '@glosfer/hyconjs-util'
+import { log4js } from './utils'
 
-const request = require("request")
-const config = require("../config")
+const request = require('request')
+const config = require('../config')
 
 const logger = log4js.getLogger(__filename)
 const mnemonic = config.mnemonic
 const password = ''
 const host = 'https://network.hycon.io/api/v3'
 
-
 interface IAddrInfo {
-    balance: string;
-    nonce: number;
-    address: string;
+    balance: string
+    nonce: number
+    address: string
 }
 
 interface ITxRet {
@@ -40,11 +38,11 @@ function outgoingTx(tx): Promise<ITxRet> {
         const endpoint = `/tx`
         const url = host + endpoint
         const options = {
-            headers: {
-                "Content-Type": "application/json;charset=utf-8"
-            },
-            method: "POST",
             body: JSON.stringify(tx),
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            method: 'POST',
             url,
         }
         request(options, (err, res, body) => {
@@ -56,7 +54,6 @@ function outgoingTx(tx): Promise<ITxRet> {
         })
     })
 }
-
 
 async function main() {
     try {
@@ -78,18 +75,19 @@ async function main() {
             amount,
             fee,
             from: wallet.address,
-            to: toAddr,
             nonce,
+            recovery,
             signature,
-            recovery
+            to: toAddr,
+
         }
         logger.debug(signedTx)
         logger.debug('Ready, sending....')
         const ret = await outgoingTx(signedTx)
         logger.debug('Result ==>')
         logger.debug(ret)
-        if (!("txhash" in ret) || (typeof ret.txhash) !== "string") {
-            return console.error("Fail to transfer hycon.")
+        if (!('txhash' in ret) || (typeof ret.txhash) !== 'string') {
+            return console.error('Fail to transfer hycon.')
         } else {
             return logger.debug(`Sent successful: ${ret.txhash}`)
         }
@@ -98,6 +96,6 @@ async function main() {
     }
 }
 
-main().catch((e)=>{
+main().catch((e) => {
     logger.error(e)
 })

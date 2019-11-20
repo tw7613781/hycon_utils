@@ -4,7 +4,8 @@
   "description": "",
   "main": "",
   "scripts": {
-    "wallet": "./node_modules/.bin/ts-node src/wallet.ts"
+    "wallet": "./node_modules/.bin/ts-node src/wallet.ts",
+    "tx": "./node_modules/.bin/ts-node src/txNotInMainChain.ts"
   },
   "repository": {
     "type": "git",
