@@ -1,5 +1,4 @@
 import { log4js } from '../src/utils'
-
 const logger = log4js.getLogger(__filename)
 
 async function main() {
