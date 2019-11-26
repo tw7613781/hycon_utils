@@ -25,7 +25,7 @@ const logger = log4js.getLogger(__filename)
 
 const host = 'http://network.hycon.io/api/v1'
 
-const hostVer3 = 'http://54.213.228.14:2442/api/v3'
+const hostVer3 = 'http://18.163.121.239:2442/api/v3'
 
 export interface TX {
     hash: string
