@@ -22,7 +22,6 @@ function jabiruGetTarget(p: number, length: number = 32): Buffer {
         // 剩零头
         carry -= target[i]
     }
-    logger.info(target)
     for (let i = 0; i < target.length; i++) {
         target[i]--
         if (target[i] !== 0xFF) {
@@ -63,8 +62,9 @@ function test(d) {
     logger.info(`Difficulty is ${d.toExponential()}`)
     const jabiruTarget = jabiruGetTarget(d)
     logger.info(`Jabiru consensus target: ${jabiruTarget.toString('hex')}`)
-    const ghostTarget = ghostGetTarget(d)
-    logger.info(`Ghost consensus target:  ${ghostTarget.toString('hex')}`)
+    logger.info(`Jabiru consensus target: ${jabiruTarget.slice(24).toString('hex')}`)
+    // const ghostTarget = ghostGetTarget(d)
+    // logger.info(`Ghost consensus target:  ${ghostTarget.toString('hex')}`)
 }
 
 function main() {
